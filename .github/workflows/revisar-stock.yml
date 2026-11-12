@@ -1,0 +1,48 @@
+name: Revisar stock DBS
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # cada 10 minutos (GitHub a veces se atrasa unos minutos)
+  workflow_dispatch:          # botón "Run workflow" para probarlo a mano
+    inputs:
+      prueba:
+        description: "Enviar también una notificación de prueba (correo + celular)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write             # para guardar estado.json y no repetir avisos
+
+concurrency:
+  group: revisar-stock
+  cancel-in-progress: false
+
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Revisar productos
+        run: python3 vigilar_stock.py
+        env:
+          NTFY_TEMA: ${{ secrets.NTFY_TEMA }}
+          CORREO: ${{ secrets.CORREO }}
+          GMAIL_CLAVE_APP: ${{ secrets.GMAIL_CLAVE_APP }}
+
+      - name: Guardar estado (solo si cambió algo)
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add estado.json 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "Cambio de stock" && git push)
+
+      - name: Correo de prueba (solo si lo pides a mano)
+        if: github.event_name == 'workflow_dispatch' && inputs.prueba
+        run: python3 vigilar_stock.py --test
+        env:
+          NTFY_TEMA: ${{ secrets.NTFY_TEMA }}
+          CORREO: ${{ secrets.CORREO }}
+          GMAIL_CLAVE_APP: ${{ secrets.GMAIL_CLAVE_APP }}

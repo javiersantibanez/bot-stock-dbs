@@ -1,0 +1,12 @@
+{
+  "productos": [
+    "https://dbs.cl/maquillaje-sets-twist-n-twinkle-holiday-calendario-de-adviento",
+    "https://dbs.cl/calendario-adviento-the-beauty-journey-2026"
+  ],
+  "minutos_entre_revisiones": 10,
+  "notificacion_windows": false,
+  "ntfy_tema": "",
+  "ntfy_servidor": "https://ntfy.sh",
+  "correo": "",
+  "gmail_clave_app": ""
+}
