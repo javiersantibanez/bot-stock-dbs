@@ -1,8 +1,10 @@
 name: Revisar stock DBS
 
 on:
-  schedule:
-    - cron: "*/10 * * * *"   # cada 10 minutos (GitHub a veces se atrasa unos minutos)
+  # PAUSADO: la cuenta de GitHub está bloqueada por facturación y cada ejecución fallaba.
+  # Para reactivarlo, quita los "#" de las dos líneas siguientes.
+  # schedule:
+  #   - cron: "*/10 * * * *"   # cada 10 minutos (GitHub a veces se atrasa unos minutos)
   workflow_dispatch:          # botón "Run workflow" para probarlo a mano
     inputs:
       prueba:
